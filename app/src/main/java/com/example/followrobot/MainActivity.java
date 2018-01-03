@@ -317,6 +317,7 @@ public class MainActivity extends Activity {
                 	editor.putBoolean("isConnected", true);
                 	editor.commit();
                 	btn.setText("断开");
+					btn.setBackgroundResource(R.drawable.switch_off);
                 }catch(IOException e){
                 	try{
                 		Toast.makeText(this, "连接失败！", Toast.LENGTH_SHORT).show();
