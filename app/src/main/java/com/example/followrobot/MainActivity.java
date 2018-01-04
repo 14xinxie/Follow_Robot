@@ -44,16 +44,29 @@ public class MainActivity extends Activity {
 	private final static String MY_UUID = "00001101-0000-1000-8000-00805F9B34FB";   //SPP服务UUID号
 	
 	private InputStream is;    //输入流，用来接收蓝牙数据
-    private String smsg = "";    //显示用数据缓存
+    ///private String smsg = "";    //显示用数据缓存
     private BluetoothDevice device = null;     //蓝牙设备
     private BluetoothSocket socket = null;      //蓝牙通信socket
 
-	private boolean bRun=false;//接收数据线程运行标志位
+	private Handler sendHandler;
+
+	private Thread readThread;//接收数据线程
+
+	private Thread sendThread;//发送数据线程
+
+	private boolean readRun=false;//接收数据线程运行标志位
+
+	private boolean sendRun=false;//发送数据线程运行标志位
     private ActionBar actionBar;
     private SharedPreferences sp;
     private Editor editor;
     private String ifSwitch ;
-    private Button bu_turnon;
+
+	//开始跟踪按钮
+    private Button btn_switch;
+
+	//连接按钮
+	private Button btn_connect;
     
     private BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();    //获取本地蓝牙适配器，即蓝牙设备
 	private SensorManager sensorManager;
@@ -70,100 +83,210 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);   //设置画面为主画面 main.xml
-        
-        
-        actionBar = getActionBar();
-        sp = getSharedPreferences("config", 0);
-        editor = sp.edit();
-        
-        bu_turnon = (Button)findViewById(R.id.bu_turnon);
-        tv_nowAngle=(TextView)findViewById(R.id.tv_nowAngle);
-        
-        // 1、获取一个SensorManager
-        sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
-        // 2、获取一个指定type的传感器
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);// 方向传感器，使用deprecated的，更好的兼容低版本。
-        // 3、注册一个监听器
-        listener = new MySensorEventListener();
-        sensorManager.registerListener(listener , sensor, SensorManager.SENSOR_DELAY_FASTEST);
 
-    
-        ifSwitch = sp.getString("switch", null);
-        if(TextUtils.isEmpty(ifSwitch)){
-        	editor.putString("switch", "on");
-        	editor.commit();
-        }
+        initView();
+
+		initData();
+
+    }
+
+	/**
+	 * 初始化视图
+	 */
+	public void initView(){
+
+		setContentView(R.layout.main);   //设置画面为主画面 main.xml
 
 
-        /**
+		actionBar = getActionBar();
+		btn_connect=(Button)findViewById(R.id.connect_button);
+		btn_switch = (Button)findViewById(R.id.switch_button);
+		tv_nowAngle=(TextView)findViewById(R.id.nowAngle_tv);
+
+		// 1、获取一个SensorManager
+		sensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+		// 2、获取一个指定type的传感器
+		Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);// 方向传感器，使用deprecated的，更好的兼容低版本。
+		// 3、注册一个监听器
+		listener = new MySensorEventListener();
+		sensorManager.registerListener(listener , sensor, SensorManager.SENSOR_DELAY_FASTEST);
+
+
+
+		/**
 		 * 检测用户的手势，并做出相应的处理
 		 */
-        gestureDetector = new GestureDetector(getApplicationContext(), new OnGestureListener() {
-			
+		gestureDetector = new GestureDetector(getApplicationContext(), new OnGestureListener() {
+
 			@Override
 			public boolean onSingleTapUp(MotionEvent e) {
 				return false;
 			}
-			
+
 			@Override
 			public void onShowPress(MotionEvent e) {
 			}
-			
+
 			@Override
 			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-					float distanceY) {
+									float distanceY) {
 				return false;
 			}
-			
+
 			@Override
 			public void onLongPress(MotionEvent e) {
 			}
-			
+
 			@Override
 			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-					float velocityY) {
+								   float velocityY) {
 				if(Math.abs(velocityY)<200){
 					return false;
 				}
 				//向下滑动
 				if(Math.abs(e2.getRawX() - e1.getRawX())<400&&(e2.getRawY() - e1.getRawY())>40){
 					actionBar.show();
-					
+
 				}
 				//向上滑动
 				if(Math.abs(e2.getRawX() - e1.getRawX())<400&&(e1.getRawY() - e2.getRawY())>40){
 					actionBar.hide();
-					
+
 				}
 				return true;
 			}
-			
+
 			@Override
 			public boolean onDown(MotionEvent e) {
 
 				return false;
 			}
 		});
-        
-       //如果打开本地蓝牙设备不成功，提示信息，结束程序
-        if (bluetooth == null){
-        	Toast.makeText(this, "无法打开手机蓝牙，请确认手机是否有蓝牙功能！", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-        
-        //开启线程设置设备可以被搜索
-       new Thread(){
-    	   public void run(){
+	}
 
-    		   if(bluetooth.isEnabled()==false){
-        		bluetooth.enable();
-    		   }
-    	   }   	   
-       }.start();      
-    }
+	/**
+	 * 初始化数据
+	 */
+	public void initData(){
 
+		sp = getSharedPreferences("config", 0);
+		editor = sp.edit();
+
+
+		//获取标志位
+		ifSwitch = sp.getString("switch", null);
+		if (TextUtils.isEmpty(ifSwitch)) {
+			editor.putString("switch", "on");
+			editor.apply();
+		}
+		//如果打开本地蓝牙设备不成功，提示信息，结束程序
+		if (bluetooth == null){
+			Toast.makeText(this, "无法打开手机蓝牙，请确认手机是否有蓝牙功能！", Toast.LENGTH_LONG).show();
+			finish();
+			return;
+		}
+
+		//开启线程设置设备可以被搜索
+		new Thread(){
+			public void run(){
+
+				if(bluetooth.isEnabled()==false){
+					bluetooth.enable();
+				}
+			}
+		}.start();
+
+
+		/**
+		 *处理定时发送方向角的Handler
+		 */
+		sendHandler=new Handler(){
+			public void handleMessage(Message msg){
+
+				//发送方向角给单片机控制端
+				sendCommand(String.valueOf(getrotate()));
+			}
+		};
+
+		//接收数据线程
+		readThread=new Thread(){
+
+			/**
+			 * 线程的run()方法只会执行一次
+			 * 因此要想线程一直运行，就得在run()方法中加一个while()循环
+			 */
+			public void run(){
+				int num;
+				byte[] buffer = new byte[1024];
+				byte[] buffer_new = new byte[1024];
+				int i ;
+				int n ;
+				//接收线程
+				while(readRun){
+					try{
+						num = is.read(buffer);         //读入数据
+						n=0;
+
+						//将服务器端发送过来的换行0x0d0a转换为手机识别的换行0a
+						//其中0x0d0a和0a均为字符的十六进制数表示
+						for(i=0;i<num;i++){
+							if((buffer[i] == 0x0d)&&(buffer[i+1]==0x0a)){
+								buffer_new[n] = 0x0a;
+								i++;
+							}else{
+								buffer_new[n] = buffer[i];
+							}
+							n++;
+						}
+						String s = new String(buffer_new,0,n);
+
+						//smsg+=s;   //写入接收缓存
+						//如果短时间没有数据，
+						//则利用Handler发送消息通知UI线程显示接收的数据
+						//同时跳出while循环
+						if(is.available()==0){
+
+							//需要数据传递，用下面方法；
+							Message msg = new Message();
+							msg.obj = s;//可以是基本类型，可以是对象，可以是List、map等；
+							receiveHandler.sendMessage(msg);
+							break;
+						}
+
+					}catch(IOException e){
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+
+
+		/**
+		 * 使用Handler来完成定时操作
+		 * 使用线程每隔5000ms向单片机蓝牙模块发送一次Android控制端当前的方向角
+		 */
+		sendThread=new Thread(){
+
+			public void run(){
+
+				while (sendRun){
+					try{
+
+						Message message=new Message();
+						message.what=1;
+						sendHandler.sendMessage(message);
+						Thread.sleep(5000); //线程睡眠5000ms
+					}catch (Exception e){
+						e.printStackTrace();
+					}
+
+				}
+
+
+			}
+
+		};
+	}
 
     /**
 	 * 处理屏幕点击事件
@@ -176,8 +299,6 @@ public class MainActivity extends Activity {
     }
 
 
-	//创建线程对象
-    Thread m=new Thread(new MyThread());
 
 	/**
 	 * 开始跟踪按钮点击事件
@@ -185,18 +306,25 @@ public class MainActivity extends Activity {
      */
     public void onTurnOnClicked(View view){
     	if(sp.getBoolean("isConnected", false)==true){
-    		if(sp.getString("switch", null).equals("on")){
-        		m.start();//开启线程
+    		if("on".equals(sp.getString("switch", null))){
+
+				sendRun=true;
+				if(!sendThread.isAlive()){
+					sendThread.start();//开启线程
+				}
+
         		editor.putString("switch", "off");
-        		editor.commit();
-        		bu_turnon.setBackgroundResource(R.drawable.switch_off);
-        		bu_turnon.setText("结束跟踪");
+        		editor.apply();
+				btn_switch.setBackgroundResource(R.drawable.switch_off);
+				btn_switch.setText("结束跟踪");
         	}else{
-        		m.interrupt();//中断线程
+        		//m.interrupt();//中断线程
+				sendRun=false;
         		editor.putString("switch", "on");
-        		editor.commit();
-        		bu_turnon.setText("开始跟踪");
-        		bu_turnon.setBackgroundResource(R.drawable.switch_on);
+
+        		editor.apply();
+				btn_switch.setText("开始跟踪");
+				btn_switch.setBackgroundResource(R.drawable.switch_on);
         	}
     	}else{
 
@@ -230,12 +358,7 @@ public class MainActivity extends Activity {
     	
 		case R.id.quit://退出
 			editor.putBoolean("isConnected", false);
-	    	editor.commit();
-			finish();
-			break;
-		case android.R.id.home://home键
-			editor.putBoolean("isConnected", false);
-	    	editor.commit();
+	    	editor.apply();
 			finish();
 			break;
 		case R.id.about://说明
@@ -279,10 +402,10 @@ public class MainActivity extends Activity {
 					n++;
 				}
 				os.write(bos_new);
-				Toast.makeText(getApplicationContext(), "发送数据成功！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "发送数据"+command+"成功！", Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 
-				Toast.makeText(getApplicationContext(), "发送数据失败！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "发送数据"+command+"失败！", Toast.LENGTH_SHORT).show();
 				e.printStackTrace();
 			}
     	}
@@ -309,15 +432,14 @@ public class MainActivity extends Activity {
                 }catch(IOException e){
                 	Toast.makeText(this, "连接失败！", Toast.LENGTH_SHORT).show();
                 }
-                //连接socket
-            	Button btn = (Button) findViewById(R.id.Button03);
+
                 try{
                 	socket.connect();
                 	Toast.makeText(this, "连接"+device.getName()+"成功！", Toast.LENGTH_SHORT).show();
                 	editor.putBoolean("isConnected", true);
-                	editor.commit();
-                	btn.setText("断开");
-					btn.setBackgroundResource(R.drawable.switch_off);
+                	editor.apply();
+                	btn_connect.setText("断开");
+					btn_connect.setBackgroundResource(R.drawable.switch_off);
                 }catch(IOException e){
                 	try{
                 		Toast.makeText(this, "连接失败！", Toast.LENGTH_SHORT).show();
@@ -340,9 +462,9 @@ public class MainActivity extends Activity {
 
 					//如果接收数据线程未开启，则开启接收数据线程，
 				    //并将接收数据线程标志位置为true
-					if(bRun==false){
-						ReadThread.start();
-						bRun=true;
+					if(readRun==false){
+						readThread.start();
+						readRun=true;
 					}
 
             }
@@ -351,58 +473,7 @@ public class MainActivity extends Activity {
     	}
     }
     
-    //接收数据线程
-    Thread ReadThread=new Thread(){
 
-
-        /**
-		 * 线程的run()方法只会执行一次
-		 * 因此要想线程一直运行，就得在run()方法中加一个while()循环
-		 */
-    	public void run(){
-    		int num;
-    		byte[] buffer = new byte[1024];
-    		byte[] buffer_new = new byte[1024];
-    		int i ;
-    		int n ;
-    		//接收线程
-    		while(bRun){
-    			try{
-					num = is.read(buffer);         //读入数据
-					n=0;
-
-					//将服务器端发送过来的换行0x0d0a转换为手机识别的换行0a
-					//其中0x0d0a和0a均为字符的十六进制数表示
-					for(i=0;i<num;i++){
-						if((buffer[i] == 0x0d)&&(buffer[i+1]==0x0a)){
-							buffer_new[n] = 0x0a;
-							i++;
-						}else{
-							buffer_new[n] = buffer[i];
-						}
-						n++;
-					}
-					String s = new String(buffer_new,0,n);
-					smsg+=s;   //写入接收缓存
-
-					//如果短时间没有数据，
-					//则利用Handler发送消息通知UI线程显示接收的数据
-					//同时跳出while循环
-					if(is.available()==0){
-
-						//需要数据传递，用下面方法；
-						Message msg = new Message();
-						msg.obj = smsg;//可以是基本类型，可以是对象，可以是List、map等；
-						receiveHandler.sendMessage(msg);
-						break;
-					}
-
-				}catch(IOException e){
-					e.printStackTrace();
-				}
-    		}
-    	}
-    };
 
     /**
 	 * 处理接收单片机蓝牙模块发送过来的数据
@@ -418,20 +489,25 @@ public class MainActivity extends Activity {
     //关闭程序掉用处理部分
     public void onDestroy(){
     	super.onDestroy();
-    	if(socket!=null)  //关闭连接socket
-    	try{
-			bRun=false;//停止接收线程
-    		socket.close();
+    	if(socket!=null){ //关闭连接socket
+			try{
 
-    	}catch(IOException e){
+				readRun=false;//停止接收数据线程
+				sendRun=false;//停止发送数据线程
+				socket.close();
 
-			e.printStackTrace();
+			}catch(IOException e){
+
+				e.printStackTrace();
+			}
 		}
-    		bluetooth.disable();  //关闭蓝牙服务
+
+		bluetooth.disable();  //关闭蓝牙服务
 
 		//Java的Thread类提供的destroy和stop方法无法正确终止线程，
 		// 只能通过标志或者interrupt()方法来进行。
-		m.interrupt();
+		//m.interrupt();
+
 
     	sensorManager.unregisterListener(listener);
         listener = null;
@@ -448,68 +524,45 @@ public class MainActivity extends Activity {
     	
     	
         //如未连接设备则打开DeviceListActivity进行设备搜索
-    	Button btn = (Button) findViewById(R.id.Button03);
+
     	if(socket==null){
     		Intent serverIntent = new Intent(this, DeviceListActivity.class); //跳转程序设置
     		startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);  //设置返回宏定义
     	}
     	else{
-    		bu_turnon.setBackgroundResource(R.drawable.switch_off);
+
     		 //关闭连接socket
     	    try{
     	    	
     	    	is.close();
     	    	socket.close();
     	    	socket = null;
-    	    	bRun = false;//停止接收数据线程
-    	    	btn.setText("连接");
+				readRun = false;//停止接收数据线程
+				sendRun=false;//停止发送数据线程
+				btn_connect.setBackgroundResource(R.drawable.switch_on);
+
+				btn_switch.setBackgroundResource(R.drawable.switch_on);
+    	    	btn_connect.setText("连接");
+				editor.putBoolean("isConnected", false);
+				editor.putString("switch", "on");
+				editor.apply();
     	    	
     	    }catch(IOException e){
 				e.printStackTrace();
 			}
-    	    editor.putBoolean("isConnected", false);
-	    	editor.commit();
+
     	}
     	return;
     }
 
 
-    /**
-	 * 使用Handler来完成定时操作
-     * 使用线程每隔5000ms向单片机蓝牙模块发送一次Android控制端当前的方向角
-	 */
-	public class MyThread implements Runnable{
-    	@Override
-    	public void run(){
 
-    		while(true)
-    		{
-    			try{
-    				
-    				Message message=new Message();
-    				message.what=1;
-					sendHandler.sendMessage(message);
-    				Thread.sleep(5000); //线程睡眠5000ms
-    				}
-    			catch(InterruptedException e)
-    			{
-    				e.printStackTrace();
-    			}
-    		}
-    	}
-    }
 
-    /**
-	 *处理定时发送方向角的Handler
-	 */
-    Handler sendHandler=new Handler(){
-    	public void handleMessage(Message msg){
 
-			//发送方向角给单片机控制端
-    		sendCommand(String.valueOf(getrotate()));
-    	}
-    };
-    
+
+
+
+
     /**
      * 定义成内部类，而不是匿名内部类，因为取消注册的时候需要用到
      */
