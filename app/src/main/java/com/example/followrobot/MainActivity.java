@@ -44,7 +44,6 @@ public class MainActivity extends Activity {
 	private final static String MY_UUID = "00001101-0000-1000-8000-00805F9B34FB";   //SPP服务UUID号
 	
 	private InputStream is;    //输入流，用来接收蓝牙数据
-    ///private String smsg = "";    //显示用数据缓存
     private BluetoothDevice device = null;     //蓝牙设备
     private BluetoothSocket socket = null;      //蓝牙通信socket
 
@@ -272,7 +271,6 @@ public class MainActivity extends Activity {
 					}
 					String s = new String(buffer_new,0,n);
 
-					//smsg+=s;   //写入接收缓存
 					//如果短时间没有数据，
 					//则利用Handler发送消息通知UI线程显示接收的数据
 					//同时跳出while循环
@@ -589,7 +587,6 @@ public class MainActivity extends Activity {
             // 0=North, 90=East, 180=South, 270=West
             // float light = values[0];// 对于光线传感器来说，values[0]:代表光线的强弱
             //float jiaodu = values[0];// 对于方向传感器来说，values[0]:代表的是与正北方向的角度，正北为0，查看api
-            //System.out.println("与正北的夹角：" + jiaodu);
             rotate = values[0];
             tv_nowAngle.setText(String.valueOf((int)rotate));
         }
