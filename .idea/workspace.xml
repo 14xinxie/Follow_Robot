@@ -52,9 +52,12 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/followrobot/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.32963988">
-              <caret line="588" column="85" selection-start-line="588" selection-start-column="85" selection-end-line="588" selection-end-column="85" />
-              <folding />
+            <state vertical-scroll-proportion="0.72853184">
+              <caret line="211" column="8" selection-start-line="211" selection-start-column="8" selection-end-line="211" selection-end-column="8" />
+              <folding>
+                <element signature="e#4651#4783#0" expanded="true" />
+                <element signature="e#4782#4783#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -2233,7 +2236,13 @@
       <option name="project" value="LOCAL" />
       <updated>1515587127665</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="1、使用内部类的方式创建线程&#10;2、解决二次连接蓝牙程序崩溃的bug">
+      <created>1515587324795</created>
+      <option name="number" value="00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1515587324795</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -2301,7 +2310,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2363,7 +2375,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2425,7 +2440,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2479,7 +2497,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2487,7 +2508,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2495,7 +2519,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2503,7 +2530,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2704,9 +2734,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/followrobot/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.32963988">
-          <caret line="588" column="85" selection-start-line="588" selection-start-column="85" selection-end-line="588" selection-end-column="85" />
-          <folding />
+        <state vertical-scroll-proportion="0.72853184">
+          <caret line="211" column="8" selection-start-line="211" selection-start-column="8" selection-end-line="211" selection-end-column="8" />
+          <folding>
+            <element signature="e#4651#4783#0" expanded="true" />
+            <element signature="e#4782#4783#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

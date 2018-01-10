@@ -49,6 +49,8 @@ public class MainActivity extends Activity {
 
 	private Handler sendHandler;
 
+	private Handler receiveHandler;
+
 	private boolean readRun=false;//接收数据线程运行标志位
 
 	private boolean sendRun=false;//发送数据线程运行标志位
@@ -203,6 +205,17 @@ public class MainActivity extends Activity {
 			}
 		};
 
+
+		/**
+		 * 处理接收单片机蓝牙模块发送过来的数据
+		 */
+		receiveHandler= new Handler(){
+			public void handleMessage(Message msg){
+				super.handleMessage(msg);
+
+				Toast.makeText(MainActivity.this,"接收到的数据为"+msg.obj.toString(), Toast.LENGTH_SHORT).show();
+			}
+		};
 		//启动接收数据线程
 		new ReadThread().start();
 
@@ -212,6 +225,7 @@ public class MainActivity extends Activity {
 
 
 	}
+
 
 
 	/**初始化发送数据线程
@@ -289,7 +303,6 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
-
 
 
     /**
@@ -482,16 +495,7 @@ public class MainActivity extends Activity {
     
 
 
-    /**
-	 * 处理接收单片机蓝牙模块发送过来的数据
-	 */
-    Handler receiveHandler= new Handler(){
-    	public void handleMessage(Message msg){
-    		super.handleMessage(msg);
 
-			Toast.makeText(MainActivity.this,"接收到的数据为"+msg.obj.toString(), Toast.LENGTH_SHORT).show();
-    	}
-    };
     
     //关闭程序掉用处理部分
     public void onDestroy(){
@@ -578,7 +582,7 @@ public class MainActivity extends Activity {
     /**
      * 定义成内部类，而不是匿名内部类，因为取消注册的时候需要用到
      */
-    private class MySensorEventListener implements SensorEventListener {
+    class MySensorEventListener implements SensorEventListener {
  
         @Override
         public void onSensorChanged(SensorEvent event) {
