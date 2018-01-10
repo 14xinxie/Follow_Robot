@@ -60,10 +60,6 @@
         "source": "F:\\Java\\Android-Projects\\Follow_Robot\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.1.1\\res\\drawable\\abc_dialog_material_background_light.xml"
     },
     {
-        "merged": "F:\\Java\\Android-Projects\\Follow_Robot\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\link.png",
-        "source": "F:\\Java\\Android-Projects\\Follow_Robot\\app\\src\\main\\res\\drawable\\link.png"
-    },
-    {
         "merged": "F:\\Java\\Android-Projects\\Follow_Robot\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_list_selector_holo_dark.xml",
         "source": "F:\\Java\\Android-Projects\\Follow_Robot\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.1.1\\res\\drawable\\abc_list_selector_holo_dark.xml"
     },

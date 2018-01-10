@@ -93,7 +93,7 @@ ADDED from F:\Java\Android-Projects\Follow_Robot\app\src\main\AndroidManifest.xm
 	android:label
 		ADDED from F:\Java\Android-Projects\Follow_Robot\app\src\main\AndroidManifest.xml:36:13-31
 	android:icon
-		ADDED from F:\Java\Android-Projects\Follow_Robot\app\src\main\AndroidManifest.xml:38:13-44
+		ADDED from F:\Java\Android-Projects\Follow_Robot\app\src\main\AndroidManifest.xml:38:13-42
 	android:theme
 		ADDED from F:\Java\Android-Projects\Follow_Robot\app\src\main\AndroidManifest.xml:37:13-46
 	android:name

@@ -35,7 +35,7 @@
             android:name=".AboutActivity"
             android:label="说明"
             android:theme="@style/AboutTheme"
-            android:icon="@drawable/follow"
+            android:icon="@drawable/back"
             />
     </application>
 

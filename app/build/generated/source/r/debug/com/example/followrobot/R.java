@@ -2195,13 +2195,14 @@ containing a value of this type.
         public static final int design_snackbar_background=0x7f020047;
         public static final int follow=0x7f020048;
         public static final int ic_launcher=0x7f020049;
-        public static final int link=0x7f02004a;
-        public static final int load=0x7f02004b;
-        public static final int notification_template_icon_bg=0x7f020050;
-        public static final int option=0x7f02004c;
-        public static final int switch_off=0x7f02004d;
-        public static final int switch_on=0x7f02004e;
-        public static final int update=0x7f02004f;
+        public static final int link_off=0x7f02004a;
+        public static final int link_on=0x7f02004b;
+        public static final int load=0x7f02004c;
+        public static final int notification_template_icon_bg=0x7f020051;
+        public static final int option=0x7f02004d;
+        public static final int switch_off=0x7f02004e;
+        public static final int switch_on=0x7f02004f;
+        public static final int update=0x7f020050;
     }
     public static final class id {
         public static final int about=0x7f0b0087;

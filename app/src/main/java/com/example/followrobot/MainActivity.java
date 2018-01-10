@@ -50,10 +50,6 @@ public class MainActivity extends Activity {
 
 	private Handler sendHandler;
 
-	private Thread readThread;//接收数据线程
-
-	private Thread sendThread;//发送数据线程
-
 	private boolean readRun=false;//接收数据线程运行标志位
 
 	private boolean sendRun=false;//发送数据线程运行标志位
@@ -208,85 +204,95 @@ public class MainActivity extends Activity {
 			}
 		};
 
-		//接收数据线程
-		readThread=new Thread(){
+		//启动接收数据线程
+		new ReadThread().start();
 
-			/**
-			 * 线程的run()方法只会执行一次
-			 * 因此要想线程一直运行，就得在run()方法中加一个while()循环
-			 */
-			public void run(){
-				int num;
-				byte[] buffer = new byte[1024];
-				byte[] buffer_new = new byte[1024];
-				int i ;
-				int n ;
-				//接收线程
-				while(readRun){
-					try{
-						num = is.read(buffer);         //读入数据
-						n=0;
+		//启动发送数据线程
+		new SendThread().start();
 
-						//将服务器端发送过来的换行0x0d0a转换为手机识别的换行0a
-						//其中0x0d0a和0a均为字符的十六进制数表示
-						for(i=0;i<num;i++){
-							if((buffer[i] == 0x0d)&&(buffer[i+1]==0x0a)){
-								buffer_new[n] = 0x0a;
-								i++;
-							}else{
-								buffer_new[n] = buffer[i];
-							}
-							n++;
-						}
-						String s = new String(buffer_new,0,n);
 
-						//smsg+=s;   //写入接收缓存
-						//如果短时间没有数据，
-						//则利用Handler发送消息通知UI线程显示接收的数据
-						//同时跳出while循环
-						if(is.available()==0){
 
-							//需要数据传递，用下面方法；
-							Message msg = new Message();
-							msg.obj = s;//可以是基本类型，可以是对象，可以是List、map等；
-							receiveHandler.sendMessage(msg);
-							break;
-						}
+	}
 
-					}catch(IOException e){
-						e.printStackTrace();
-					}
+
+	/**初始化发送数据线程
+	 * 使用Handler来完成定时操作
+	 * 使用线程每隔5000ms向单片机蓝牙模块发送一次Android控制端当前的方向角
+	 */
+	class SendThread extends Thread{
+
+		public void run(){
+
+			while (sendRun){
+				try{
+
+					Message message=new Message();
+					message.what=1;
+					sendHandler.sendMessage(message);
+					Thread.sleep(5000); //线程睡眠5000ms
+				}catch (Exception e){
+					e.printStackTrace();
 				}
-			}
-		};
 
+			}
+
+
+		}
+	}
+
+	//初始化读取数据线程
+	class ReadThread extends Thread{
 
 		/**
-		 * 使用Handler来完成定时操作
-		 * 使用线程每隔5000ms向单片机蓝牙模块发送一次Android控制端当前的方向角
+		 * 线程的run()方法只会执行一次
+		 * 因此要想线程一直运行，就得在run()方法中加一个while()循环
 		 */
-		sendThread=new Thread(){
+		public void run(){
+			int num;
+			byte[] buffer = new byte[1024];
+			byte[] buffer_new = new byte[1024];
+			int i ;
+			int n ;
+			//接收线程
+			while(readRun){
+				try{
+					num = is.read(buffer);         //读入数据
+					n=0;
 
-			public void run(){
+					//将服务器端发送过来的换行0x0d0a转换为手机识别的换行0a
+					//其中0x0d0a和0a均为字符的十六进制数表示
+					for(i=0;i<num;i++){
+						if((buffer[i] == 0x0d)&&(buffer[i+1]==0x0a)){
+							buffer_new[n] = 0x0a;
+							i++;
+						}else{
+							buffer_new[n] = buffer[i];
+						}
+						n++;
+					}
+					String s = new String(buffer_new,0,n);
 
-				while (sendRun){
-					try{
+					//smsg+=s;   //写入接收缓存
+					//如果短时间没有数据，
+					//则利用Handler发送消息通知UI线程显示接收的数据
+					//同时跳出while循环
+					if(is.available()==0){
 
-						Message message=new Message();
-						message.what=1;
-						sendHandler.sendMessage(message);
-						Thread.sleep(5000); //线程睡眠5000ms
-					}catch (Exception e){
-						e.printStackTrace();
+						//需要数据传递，用下面方法；
+						Message msg = new Message();
+						msg.obj = s;//可以是基本类型，可以是对象，可以是List、map等；
+						receiveHandler.sendMessage(msg);
+						break;
 					}
 
+				}catch(IOException e){
+					e.printStackTrace();
 				}
-
-
 			}
-
-		};
+		}
 	}
+
+
 
     /**
 	 * 处理屏幕点击事件
@@ -295,6 +301,8 @@ public class MainActivity extends Activity {
      */
     public boolean onTouchEvent(MotionEvent event) {
     	gestureDetector.onTouchEvent(event);
+
+
     	return super.onTouchEvent(event);
     }
 
@@ -309,16 +317,14 @@ public class MainActivity extends Activity {
     		if("on".equals(sp.getString("switch", null))){
 
 				sendRun=true;
-				if(!sendThread.isAlive()){
-					sendThread.start();//开启线程
-				}
+
+				new SendThread().start(); //创建线程实例，启动线程
 
         		editor.putString("switch", "off");
         		editor.apply();
 				btn_switch.setBackgroundResource(R.drawable.switch_off);
 				btn_switch.setText("结束跟踪");
         	}else{
-        		//m.interrupt();//中断线程
 				sendRun=false;
         		editor.putString("switch", "on");
 
@@ -364,6 +370,7 @@ public class MainActivity extends Activity {
 		case R.id.about://说明
 			Intent intent = new Intent(MainActivity.this,AboutActivity.class);
 			startActivity(intent);
+			finish();
 			break;
 
 		default:
@@ -439,7 +446,7 @@ public class MainActivity extends Activity {
                 	editor.putBoolean("isConnected", true);
                 	editor.apply();
                 	btn_connect.setText("断开");
-					btn_connect.setBackgroundResource(R.drawable.switch_off);
+					btn_connect.setBackgroundResource(R.drawable.link_off);
                 }catch(IOException e){
                 	try{
                 		Toast.makeText(this, "连接失败！", Toast.LENGTH_SHORT).show();
@@ -463,9 +470,11 @@ public class MainActivity extends Activity {
 					//如果接收数据线程未开启，则开启接收数据线程，
 				    //并将接收数据线程标志位置为true
 					if(readRun==false){
-						readThread.start();
-						readRun=true;
+						new ReadThread().start(); //创建线程实例，启动接收数据线程
 					}
+
+
+
 
             }
     		break;
@@ -492,6 +501,10 @@ public class MainActivity extends Activity {
     	if(socket!=null){ //关闭连接socket
 			try{
 
+
+				//当线程标志位置为false时，线程的while循环结束了，
+				//即线程的run()方法结束了，此时线程实例已不存在了，
+				//不可以使用start()方法启动线程，只能重新创建一个线程实例来启动线程
 				readRun=false;//停止接收数据线程
 				sendRun=false;//停止发送数据线程
 				socket.close();
@@ -538,11 +551,12 @@ public class MainActivity extends Activity {
     	    	socket.close();
     	    	socket = null;
 				readRun = false;//停止接收数据线程
-				sendRun=false;//停止发送数据线程
-				btn_connect.setBackgroundResource(R.drawable.switch_on);
+				sendRun = false;//停止发送数据线程
+				btn_connect.setBackgroundResource(R.drawable.link_on);
 
 				btn_switch.setBackgroundResource(R.drawable.switch_on);
     	    	btn_connect.setText("连接");
+				btn_switch.setText("开始跟踪");
 				editor.putBoolean("isConnected", false);
 				editor.putString("switch", "on");
 				editor.apply();

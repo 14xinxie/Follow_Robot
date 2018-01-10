@@ -34,7 +34,7 @@
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity
             android:name="com.example.followrobot.AboutActivity"
-            android:icon="@drawable/follow"
+            android:icon="@drawable/back"
             android:label="说明"
             android:theme="@style/AboutTheme" />
     </application>
