@@ -52,8 +52,8 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/followrobot/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.72853184">
-              <caret line="211" column="8" selection-start-line="211" selection-start-column="8" selection-end-line="211" selection-end-column="8" />
+            <state vertical-scroll-proportion="3.9889197">
+              <caret line="520" column="0" selection-start-line="520" selection-start-column="0" selection-end-line="520" selection-end-column="0" />
               <folding>
                 <element signature="e#4651#4783#0" expanded="true" />
                 <element signature="e#4782#4783#0" expanded="true" />
@@ -2242,12 +2242,18 @@
       <option name="project" value="LOCAL" />
       <updated>1515587324795</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="1、使用内部类的方式创建线程&#10;2、解决二次连接蓝牙程序崩溃的bug">
+      <created>1515588559835</created>
+      <option name="number" value="00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1515588559835</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1380" height="737" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -2299,7 +2305,8 @@
     <MESSAGE value="1、修改连接按钮中的文字切换为断开时图片不切换的bug&#10;" />
     <MESSAGE value="1、更改线程的创建方式&#10;2、通过标志位来停止线程" />
     <MESSAGE value="1、使用内部类的方式创建线程&#10;2、解决二次连接蓝牙程序崩溃的bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="1、使用内部类的方式创建线程&#10;2、解决二次连接蓝牙程序崩溃的bug" />
+    <MESSAGE value="1、退出程序时修改标志位为初始值，防止二次打开程序时程序崩溃" />
+    <option name="LAST_COMMIT_MESSAGE" value="1、退出程序时修改标志位为初始值，防止二次打开程序时程序崩溃" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -2734,8 +2741,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/followrobot/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.72853184">
-          <caret line="211" column="8" selection-start-line="211" selection-start-column="8" selection-end-line="211" selection-end-column="8" />
+        <state vertical-scroll-proportion="3.9889197">
+          <caret line="520" column="0" selection-start-line="520" selection-start-column="0" selection-end-line="520" selection-end-column="0" />
           <folding>
             <element signature="e#4651#4783#0" expanded="true" />
             <element signature="e#4782#4783#0" expanded="true" />

@@ -509,6 +509,16 @@ public class MainActivity extends Activity {
 				//不可以使用start()方法启动线程，只能重新创建一个线程实例来启动线程
 				readRun=false;//停止接收数据线程
 				sendRun=false;//停止发送数据线程
+
+				btn_connect.setBackgroundResource(R.drawable.link_on);
+
+				btn_switch.setBackgroundResource(R.drawable.switch_on);
+				btn_connect.setText("连接");
+				btn_switch.setText("开始跟踪");
+				editor.putBoolean("isConnected", false);
+				editor.putString("switch", "on");
+				editor.apply();
+
 				socket.close();
 
 			}catch(IOException e){
