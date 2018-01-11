@@ -462,7 +462,6 @@ public class MainActivity extends Activity {
                 	try{
                 		Toast.makeText(this, "连接失败！", Toast.LENGTH_SHORT).show();
                 		socket.close();
-                		socket = null;
                 	}catch(IOException ee){
                 		Toast.makeText(this, "连接失败！", Toast.LENGTH_SHORT).show();
                 	}
@@ -532,10 +531,8 @@ public class MainActivity extends Activity {
 		//Java的Thread类提供的destroy和stop方法无法正确终止线程，
 		// 只能通过标志或者interrupt()方法来进行。
 		//m.interrupt();
-
-
     	sensorManager.unregisterListener(listener);
-        listener = null;
+
     }
     
     
@@ -561,7 +558,6 @@ public class MainActivity extends Activity {
     	    	
     	    	is.close();
     	    	socket.close();
-    	    	socket = null;
 				readRun = false;//停止接收数据线程
 				sendRun = false;//停止发送数据线程
 				btn_connect.setBackgroundResource(R.drawable.link_on);
