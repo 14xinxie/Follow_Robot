@@ -480,6 +480,7 @@ public class MainActivity extends Activity {
 					//如果接收数据线程未开启，则开启接收数据线程，
 				    //并将接收数据线程标志位置为true
 					if(readRun==false){
+						readRun=true;
 						new ReadThread().start(); //创建线程实例，启动接收数据线程
 					}
 
@@ -518,7 +519,10 @@ public class MainActivity extends Activity {
 				editor.putString("switch", "on");
 				editor.apply();
 
+				is.close();
 				socket.close();
+				is=null;
+				socket=null;
 
 			}catch(IOException e){
 
@@ -532,6 +536,7 @@ public class MainActivity extends Activity {
 		// 只能通过标志或者interrupt()方法来进行。
 		//m.interrupt();
     	sensorManager.unregisterListener(listener);
+		listener=null;
 
     }
     
@@ -558,6 +563,8 @@ public class MainActivity extends Activity {
     	    	
     	    	is.close();
     	    	socket.close();
+				is=null;
+				socket=null;
 				readRun = false;//停止接收数据线程
 				sendRun = false;//停止发送数据线程
 				btn_connect.setBackgroundResource(R.drawable.link_on);
